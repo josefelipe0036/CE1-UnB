@@ -1,0 +1,94 @@
+---
+title: "Lista 03"
+author: "José Felipe"
+date: "19/10/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+if(!require("quantreg")) install.packages("quantreg")
+```
+A)
+
+
+
+```{r}
+data("Mammals")
+library(ggplot2)
+ ggplot(Mammals, aes(x = weight, fill = speed, vp.width = 0.2, 
+                                vp.height = 0.2)) +
+  geom_density(alpha = .5) +
+  theme_classic(base_size = 18) +
+  scale_x_continuous(breaks = seq(from = 00,to = 6000,by = 1), limits = c(00,6000)) +
+  scale_y_continuous(breaks = seq(from = 0,to = 110,by = 1)) +
+  xlab("peso") + 
+  ylab("velocidade")
+
+```
+O banco de dados **Mammals**, esta relacionando mamíferos com o peso, a velocidade, se é ou não especial ou saltadores.
+Conseguimos por exemplo ao associarmos a velocidade com o peso, observa-se que a maioria do animais velozes são os mais leves, outra observação é que a maioria dos mamíferos estão concentrados entre os animais mais leves, pode-se conseguir observar diversas outras coisas.
+<p>B)
+```{r}
+data("Mammals")
+
+max(Mammals$speed)
+
+```
+A maior velocidade é 110 
+
+
+<p>C)
+```{r}
+Mammals[Mammals$speed == max(Mammals$speed),"weight"]
+```
+O peso é 55
+
+<p>D)
+```{r}
+Mammals[Mammals$weight == max(Mammals$weight),"speed"]
+```
+A velocidade é 35
+
+<p>E)
+```{r}
+data("Mammals")
+is.na(Mammals$speed)
+```
+Não há N.A
+
+<p>F)
+```{r}
+Mammals[Mammals$specials == TRUE,"speed"]-> a
+min(a)
+```
+A velocidade é 1.6
+
+
+<p>G)
+```{r}
+
+nrow(Mammals[Mammals$specials==TRUE,])
+```
+Há 10.
+<p>H)
+```{r}
+sum(Mammals[Mammals$specials == TRUE,"speed"])/10
+
+```
+A média é 21,12
+
+<p>I)
+```{r}
+Mammals[Mammals$weight == 85,]
+
+```
+Sim, há um animal com mesma massa que tenho, é o animal de número 29.
+
+<p>J)
+```{r}
+teste <- Mammals
+teste$weight[teste$weight == 85] <- NA
+is.na(teste$weight)
+teste$weight
+```

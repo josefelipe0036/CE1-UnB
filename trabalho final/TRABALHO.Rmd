@@ -1,0 +1,357 @@
+---
+title: "Trabalho final"
+author: "José Felipe"
+date: "18/11/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	error = FALSE,
+	message = FALSE,
+	warning = FALSE,
+	autodep = TRUE,
+	cache = TRUE,
+	results = "hide"
+)
+#carregando os pacotes
+if(length(ls()) > 0) rm(list = ls())
+knitr::opts_chunk$set(message=FALSE, echo=FALSE, cache=TRUE, 
+                      results='hide', warning=FALSE, error=FALSE, autodep=TRUE)
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load("tidyverse", "dplyr", "tidyr", "reshape2", "irtoys", "ltm", "mirt", "bairt", "ggplot2", "R.utils", "igraph", "factoextra", "threejs", "GGally", "pander", "rstan", "fmsb", "tibble", "stringr", "antaresViz", "networkD3", "knitr", "kableExtra", "RColorBrewer")
+
+tema.graficos <- theme_light() + 
+  theme(plot.margin=unit(rep(.5, 4),"cm"),
+        axis.title.y=element_text(margin=unit(rep(.5, 4), "cm"), size=14),
+        axis.title.x=element_text(margin=unit(rep(.5, 4), "cm"), size=14),
+        axis.text.y=element_text(size=14),
+        axis.text.x=element_text(size=14),
+        panel.border=element_rect(colour=gray(.85)),
+        panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank(),
+        panel.background=element_blank(),
+        legend.title=element_text(size=12),
+        legend.text=element_text(size=12),
+        legend.margin=margin(l=20, unit='pt'),
+        strip.text.x=element_text(size=14),
+        strip.text.y=element_text(size=14)
+  )
+theme_set(tema.graficos)
+
+#lendo os dados
+library("openxlsx")
+pdad <-read.xlsx("C:/Users/josef/Desktop/UnB/Primeiro semestre/CE1/Nova pasta/pdad2.xlsx")
+library(dplyr)
+library(tidyr)
+library(tibble)
+
+pdad2<-pdad%>%
+  select_("A01ra","E03","E04","E052","E10","E13","E141","E142","F01","F10","F11","F12","F13","G02","G06","G07","G12","G13","G141","G142","G143","G144","G145","G146","G147","G15","G16","G17","G18", "G204")
+
+view(pdad2)
+
+```
+
+\[fitpaper=TRUE, pages={1}]{capa} 
+
+
+```{r}
+#Conta quantas pessoas por ra
+library(dplyr)
+
+pdad["total"] <-1
+df2 <- aggregate(pdad[c("total")], by=list(pdad$A01ra), FUN=sum, na.rm=TRUE)
+teste<-df2
+teste$Group.1[teste$Group.1 == 1] <- 'Plano Piloto'
+teste$Group.1[teste$Group.1 == 2] <- "Gama"
+teste$Group.1[teste$Group.1 == 3] <- "Taguatinga"
+teste$Group.1[teste$Group.1 == 4] <- 'Brazlândia'
+teste$Group.1[teste$Group.1 == 5] <- "Sobradinho"
+teste$Group.1[teste$Group.1 == 6] <- "Planaltina"
+teste$Group.1[teste$Group.1 == 7] <- 'Paranoá'
+teste$Group.1[teste$Group.1 == 8] <-'Núcleo Bandeirante'
+teste$Group.1[teste$Group.1 == 9] <- 'Ceilândia'
+teste$Group.1[teste$Group.1 == 10] <- 'Guará'
+teste$Group.1[teste$Group.1 == 11] <- "Cruzeiro"
+teste$Group.1[teste$Group.1 == 12] <- "Samambaia"
+teste$Group.1[teste$Group.1 == 13] <- 'Santa Maria'
+teste$Group.1[teste$Group.1 == 14] <- 'São Sebastião'
+teste$Group.1[teste$Group.1 == 15] <- 'Recanto das Emas'
+teste$Group.1[teste$Group.1 == 16] <-'Lago Sul'
+teste$Group.1[teste$Group.1 == 17] <-'Riacho Fundo'
+teste$Group.1[teste$Group.1 == 18] <-'Lago Norte'
+teste$Group.1[teste$Group.1 == 19] <- 'Candangolândia'
+teste$Group.1[teste$Group.1 == 20] <- 'Águas Claras'
+teste$Group.1[teste$Group.1 == 21] <-'Riacho Fundo II'
+teste$Group.1[teste$Group.1 == 22] <-"Sudoeste/Octogonal"
+teste$Group.1[teste$Group.1 == 23] <-'Varjão'
+teste$Group.1[teste$Group.1 == 24] <- 'Park Way'
+teste$Group.1[teste$Group.1 == 25] <- "SCIA"
+teste$Group.1[teste$Group.1 == 26] <- 'Sobradinho II'
+teste$Group.1[teste$Group.1 == 27] <- 'Jardim Botânico'
+teste$Group.1[teste$Group.1 == 28] <- 'Itapoã'
+teste$Group.1[teste$Group.1 == 29] <- 'SIA'
+teste$Group.1[teste$Group.1 == 30] <- 'Vicente Pires'
+teste$Group.1[teste$Group.1 == 31] <- "Fercal"
+teste$Group.1[teste$Group.1 == 32] <- 'Sol Nascente/ Pôr do Sol'
+teste$Group.1[teste$Group.1 == 33] <- "Arniqueira"
+head(teste)
+
+
+library(ggplot2)
+library(dplyr)
+
+teste%>%
+  group_by(Group.1) %>%
+  ggplot(aes(Group.1, total, label =total)) +
+  geom_col(fill="blue",width=1.1) +
+  geom_text(aes(y = total), vjust = 0.6) +
+  labs(title = "Quantidade de entrevistados por região administrativa", x = "Regiões administrativas", y = "Entrevistados") +
+  theme_bw(base_size = 10)+
+  theme(axis.text.x = element_text(angle = 90))+
+  coord_flip()
+
+
+```
+
+
+
+```{r}
+#conta quantos homens e mulheres responderam
+pdad["total"] <-1
+df3 <- aggregate(pdad[c("total")], by=list(pdad$E03), FUN=sum, na.rm=TRUE)
+df3[df3$Group.1 == "1"] <- "masculino" 
+df3[df3$Group.1 == "2"] <- "feminino"
+pie(df3$total, main = "Sexo", labels = c("47.088%","52.912%"),col = c(4,2))
+legend("topright",fill = c(4,2), legend = c("Masculino", "Feminino"))
+
+```
+
+
+```{r}
+#conta quantas pessoas responderam por cor/raça
+pdad["total"] <-1
+df4 <- aggregate(pdad[c("total")], by=list(pdad$E04), FUN=sum, na.rm=TRUE)
+df4
+pie(df4$total, main = "Raça", labels=c("40.72%","9.96%","1.21%","47.81%","0.3%"),col=c(6,2,3,4,5))
+legend("topright", fill = c(6,2,3,4,5), legend = c("Branca","Preta","Amarela","Parda","Indigena"))
+```
+
+```{r}
+#conta quantos tem plano de saúde
+pdad["total"] <-1
+df5 <- aggregate(pdad[c("total")], by=list(pdad$E10), FUN=sum, na.rm=TRUE)
+df5
+pie(df5$total, main="Plano de saúde",labels=c("17.15%","16.84%","1.55%","63.81%","0.65%"), col=c(6,5,4,3,2))
+legend("topright", fill=c(6,5,4,3,2),legend = c("Particular","Empresarial","Particular e empresarial","Não tem plano","Não soube responder"))
+```
+
+```{r}
+#Quantos nasceram no DF
+pdad["total"] <-1
+df8 <- aggregate(pdad[c("total")], by=list(pdad$E13), FUN=sum, na.rm=TRUE)
+df8
+pie(df8$total,main ="Quantidade de moradores que nasceram no Distrito Federal", labels =c("52.6%","47.4%"),col=c(2,4) )
+legend("topright", fill=c(2,4),legend = c("Nasceram no DF", "Nasceram em outra região"))
+```
+```{r}
+#conta quantos sabem ler e escrever
+pdad["total"] <-1
+df6 <- aggregate(pdad[c("total")], by=list(pdad$F01), FUN=sum, na.rm=TRUE)
+df6
+pie(df6$total,main ="Quantidade de moradores que sabem ler.", labels =c("91.00%","2.90%","0.30%","5.80%"),col=c(5,2,3,4) )
+legend("topright", fill=c(5,2,3,4),legend = c("Sabem ler", "Não sabem ler","Não souberam responder", "Não se aplica"))
+
+```
+
+
+
+
+```{r}
+###g07~A01RA
+pdad2%>%
+  ggplot(aes(G07, A01ra))
+```
+
+
+```{r}
+#Horas de trabalho por salario
+
+
+teste01<-pdad %>%
+  subset(G17!= 88888, G17!= 99999)
+teste01->teste1
+teste1$E03[teste1$E03 %in% "1"]<- "Masculino"
+teste1$E03[teste1$E03 %in% "2"]<-"Feminino"
+teste02<-teste1%>%
+  subset(G16!= 88888)
+teste03<- teste02%>%
+  subset(G16!=77777)
+teste04<-teste03%>%
+  subset(G16!=99999, G16!=0)
+
+teste04%>%
+  ggplot(aes(G17, G16, color= E03))+
+  geom_point() +
+  labs(title = "Salário por horas trabalhadas semanalmente", x = "Horas trabalhadas", y = "Salário")+
+  theme_bw(base_size = 10)
+
+
+```
+
+```{r}
+teste05<-teste04 %>%
+  subset(G18!= 88888, G18!= 99999)
+teste05%>%
+  ggplot(aes(G17 , G18, color= E03))+
+  geom_point() +
+  labs(title = "Horas trabalhadas semanalmente", x ="Horas semanais trabalhadas" , y = "Horas semanais dedicadas a atividades domiciliares")+
+  theme_bw(base_size = 10)
+
+
+
+```
+```{r}
+# 
+teste06<-teste05%>%
+  select_("G15", "G07", "A01ra", "G204", "E03")
+
+teste06$A01ra[teste06$A01ra == 1] <- 'Plano Piloto'
+teste06$A01ra[teste06$A01ra == 2] <- "Gama"
+teste06$A01ra[teste06$A01ra == 3] <- "Taguatinga"
+teste06$A01ra[teste06$A01ra == 4] <- 'Brazlândia'
+teste06$A01ra[teste06$A01ra == 5] <- "Sobradinho"
+teste06$A01ra[teste06$A01ra == 6] <- "Planaltina"
+teste06$A01ra[teste06$A01ra == 7] <- 'Paranoá'
+teste06$A01ra[teste06$A01ra == 8] <-'Núcleo Bandeirante'
+teste06$A01ra[teste06$A01ra == 9] <- 'Ceilândia'
+teste06$A01ra[teste06$A01ra == 10] <- 'Guará'
+teste06$A01ra[teste06$A01ra == 11] <- "Cruzeiro"
+teste06$A01ra[teste06$A01ra == 12] <- "Samambaia"
+teste06$A01ra[teste06$A01ra == 13] <- 'Santa Maria'
+teste06$A01ra[teste06$A01ra == 14] <- 'São Sebastião'
+teste06$A01ra[teste06$A01ra == 15] <- 'Recanto das Emas'
+teste06$A01ra[teste06$A01ra == 16] <-'Lago Sul'
+teste06$A01ra[teste06$A01ra == 17] <-'Riacho Fundo'
+teste06$A01ra[teste06$A01ra == 18] <-'Lago Norte'
+teste06$A01ra[teste06$A01ra == 19] <- 'Candangolândia'
+teste06$A01ra[teste06$A01ra == 20] <- 'Águas Claras'
+teste06$A01ra[teste06$A01ra == 21] <-'Riacho Fundo II'
+teste06$A01ra[teste06$A01ra == 22] <-"Sudoeste/Octogonal"
+teste06$A01ra[teste06$A01ra == 23] <-'Varjão'
+teste06$A01ra[teste06$A01ra == 24] <- 'Park Way'
+teste06$A01ra[teste06$A01ra == 25] <- "SCIA-Estrutural"
+teste06$A01ra[teste06$A01ra == 26] <- 'Sobradinho II'
+teste06$A01ra[teste06$A01ra == 27] <- 'Jardim Botânico'
+teste06$A01ra[teste06$A01ra == 28] <- 'Itapoã'
+teste06$A01ra[teste06$A01ra == 29] <- 'SIA'
+teste06$A01ra[teste06$A01ra == 30] <- 'Vicente Pires'
+teste06$A01ra[teste06$A01ra == 31] <- "Fercal"
+teste06$A01ra[teste06$A01ra == 32] <- 'Sol Nascente/ Pôr do Sol'
+teste06$A01ra[teste06$A01ra == 33] <- "Arniqueira"
+
+
+
+teste07<-teste05%>%
+  filter(G07== "1"| G07=="3"| G07=="4"| G07=="9"| G07=="12"| G07=="13"| G07=="25"| G07=="29"| G07=="34"| G07=="39"| G07=="40"| G07=="41"| G07=="42"| G07=="44"| G07=="45"| G07=="47")%>%
+  subset(G15!= 88, G15!= 99)%>%
+  filter(A01ra=="3"|A01ra=="25"|A01ra=="13"|A01ra=="1"|A01ra=="4"|A01ra=="9"|A01ra=="12")
+
+
+
+teste07$A01ra[teste07$A01ra == 3] <- "Taguatinga"
+teste07$A01ra[teste07$A01ra == 25] <- "SCIA-Estrutural"
+teste07$A01ra[teste07$A01ra == 13] <- 'Santa Maria'
+teste07$A01ra[teste07$A01ra == 1] <- 'Plano Piloto'
+teste07$A01ra[teste07$A01ra == 4] <- 'Brazlândia'
+teste07$A01ra[teste07$A01ra == 9] <- 'Ceilândia'
+teste07$A01ra[teste07$A01ra == 12] <- "Samambaia"
+
+
+teste07$G07[teste07$G07 == 1] <- 'Plano Piloto'
+teste07$G07[teste07$G07 == 2] <- "Gama"
+teste07$G07[teste07$G07 == 3] <- "Taguatinga"
+teste07$G07[teste07$G07 == 4] <- 'Brazlândia'
+teste07$G07[teste07$G07 == 5] <- "Sobradinho"
+teste07$G07[teste07$G07 == 6] <- "Planaltina"
+teste07$G07[teste07$G07 == 7] <- 'Paranoá'
+teste07$G07[teste07$G07 == 8] <-'Núcleo Bandeirante'
+teste07$G07[teste07$G07 == 9] <- 'Ceilândia'
+teste07$G07[teste07$G07 == 10] <- 'Guará'
+teste07$G07[teste07$G07 == 11] <- "Cruzeiro"
+teste07$G07[teste07$G07 == 12] <- "Samambaia"
+teste07$G07[teste07$G07 == 13] <- 'Santa Maria'
+teste07$G07[teste07$G07 == 14] <- 'São Sebastião'
+teste07$G07[teste07$G07 == 15] <- 'Recanto das Emas'
+teste07$G07[teste07$G07 == 16] <-'Lago Sul'
+teste07$G07[teste07$G07 == 17] <-'Riacho Fundo'
+teste07$G07[teste07$G07 == 18] <-'Lago Norte'
+teste07$G07[teste07$G07 == 19] <- 'Candangolândia'
+teste07$G07[teste07$G07 == 20] <- 'Águas Claras'
+teste07$G07[teste07$G07 == 21] <-'Riacho Fundo II'
+teste07$G07[teste07$G07 == 22] <-"Sudoeste/Octogonal"
+teste07$G07[teste07$G07 == 23] <-'Varjão'
+teste07$G07[teste07$G07 == 24] <- 'Park Way'
+teste07$G07[teste07$G07 == 25] <- "SCIA-Estrutural"
+teste07$G07[teste07$G07 == 26] <- 'Sobradinho II'
+teste07$G07[teste07$G07 == 27] <- 'Jardim Botânico'
+teste07$G07[teste07$G07 == 28] <- 'Itapoã'
+teste07$G07[teste07$G07 == 29] <- 'SIA'
+teste07$G07[teste07$G07 == 30] <- 'Vicente Pires'
+teste07$G07[teste07$G07 == 31] <- "Fercal"
+teste07$G07[teste07$G07 == 32] <- "Vários locais no DF"
+teste07$G07[teste07$G07 == 33] <- "Na própria residência"
+teste07$G07[teste07$G07 == 34] <-"Águas Lindas"
+teste07$G07[teste07$G07 == 35] <-"Alexânia"
+teste07$G07[teste07$G07 == 36] <-"Cidade Ocidental (sede e ABC)"
+teste07$G07[teste07$G07 == 37] <-"Cristalina(Sede, Campos lindos/ Marajó)"
+teste07$G07[teste07$G07 == 38] <-"Cocalzinho(Sede, Girassol / Edilândia)"
+teste07$G07[teste07$G07 == 39] <-"Formosa"
+teste07$G07[teste07$G07 == 40] <-"Luziânia(Sede e Distritos)"
+teste07$G07[teste07$G07 == 41] <-"Novo Gama"
+teste07$G07[teste07$G07 == 42] <-"Padre Bernardo (Sede, Monte Alto/ Vendinha)"
+teste07$G07[teste07$G07 == 43] <-"Planaltina"
+teste07$G07[teste07$G07 == 44] <-"Santo Antônio"
+teste07$G07[teste07$G07 == 45] <-"Valparaíso"
+teste07$G07[teste07$G07 == 46] <-"Outros locais de Goiás"
+teste07$G07[teste07$G07 == 47] <-"Outros Estados"
+
+teste07$G15[teste07$G15 == 1] <- "Até 15 minutos"
+teste07$G15[teste07$G15 == 2] <- "Entre 15 e 30 minutos"
+teste07$G15[teste07$G15 == 3] <- "Entre 30 minutos e 45 minutos"
+teste07$G15[teste07$G15 == 4] <- "Entre 45 minutos e 1 hora"
+teste07$G15[teste07$G15 == 5] <- "Entre 1 hora e 1 hora e meia"
+teste07$G15[teste07$G15 == 6] <-"Entre 1 hora e meia e 1 hora e 45 minutos"
+teste07$G15[teste07$G15 == 7] <- "Entre 1 horas e 45 minutos e 2 horas"
+teste07$G15[teste07$G15 == 8] <- "Mais de duas horas"
+
+teste07%>%
+  ggplot(aes(G07,A01ra, col= G15, label= A01ra ))+
+  geom_point()+
+  labs(title = "RA's e locais de trabalho dos entrevistados ", x = "Locais de trabalhos", y = "Regiões administrativas") +
+  theme_bw(base_size = 10)+
+  theme(axis.text.x = element_text(angle = 90))
+
+
+  
+
+```
+
+
+
+```{r}
+teste09<-teste06%>%
+  filter(teste06$G204!= 0, teste06$G204!= 66666, teste06$G204!= 77777, teste06$G204!= 88888, teste06$G204!= 99999)
+
+head(teste09)
+teste09%>%
+  ggplot(aes(A01ra, G204, col= E03))+
+  geom_point() +
+  theme_bw(base_size = 10)+
+  theme(axis.text.x = element_text(angle = 90))
+
+
+```

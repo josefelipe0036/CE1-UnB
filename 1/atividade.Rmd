@@ -1,0 +1,80 @@
+---
+title: "Atividade 01"
+author: "José Felipe Custódia de Azevedo"
+date: "25/09/2020"
+output: pdf_document
+
+
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+\pagestyle{plain}
+
+# Análise de dados
+
+
+Em estatística, a **análise exploratória de dados** (AED) é uma abordagem à análise de conjuntos de dados de modo a resumir suas características principais, frequentemente com métodos visuais. Um modelo estatístico pode ou não ser usado, mas primariamente a **AED** tem como objetivo observar o que os dados podem nos dizer além da modelagem formal ou do processo de teste de hipóteses. A análise exploratória de dados foi promovida pelo estatístico norte-americano John Tukey.
+
+
+![](01){width=35%}            ![](01){width=25%}
+
+John Tukey\hspace{5cm}John Tukey
+
+
+
+
+
+**A análise exploratória de dados** emprega grande variedade de técnicas gráficas e quantitativas, visando maximizar a obtenção de informações ocultas na sua estrutura, descobrir variáveis importantes em suas tendências, detectar comportamentos anômalos do fenômeno, testar se são válidas as hipóteses assumidas, escolher modelos e determinar o número ótimo de variáveis.
+
+## Técnicas
+Há várias ferramentas úteis para a análise exploratória de dados, mas a **AED** é mais caracterizada pela atitude tomada do que por técnicas particulares.
+Técnicas gráficas típicas usadas na análise exploratória de dados são:
+(Mais informações acesse as respectivas páginas)
+
+[Diagrama de caixa;](https://pt.wikipedia.org/wiki/Diagrama_de_caixa)
+
+[Histograma;](https://pt.wikipedia.org/wiki/Histograma)
+
+[Diagrama de Pareto;](https://pt.wikipedia.org/wiki/Diagrama_de_Pareto)
+
+Existem diversas técnicas gráficas que podemos encontrar na [**Wikipedia**](https://pt.wikipedia.org/wiki/An%C3%A1lise_explorat%C3%B3ria_de_dados) ou no [**Medium**](https://medium.com/@gabriel.stankevix/analise-explorat%C3%B3ria-de-dados-732007ddbfaf).
+
+
+### **Exemplo:**
+Para ilustrar, considere um exemplo em que a tarefa da análise é encontrar as variáveis que melhor preveem a gorjeta que os clientes de uma mesa em um jantar darão ao garçom.[21] As variáveis disponíveis nos dados coletados para esta tarefa são: o montante da gorjeta, o montante da conta, o gênero do pagante, seção de fumantes/não fumantes, a hora do dia, o dia da semana e o tamanho da mesa. A tarefa da análise primária é aproximada ao ajustar um modelo de regressão em que a razão da gorjeta é a variável de resposta. O modelo ajustado é:
+
+Y = 0.18 - 0.01m
+
+*Portanto, o gráfico da função é:*
+
+
+```{r echo = FALSE, OUT.width = "5000px"}
+
+x=10:0
+y=(0.18 - 0.01*x)
+plot(x,y,'l')
+
+```
+```{r}
+x=10:0
+y=(0.18 - 0.01*x)
+plot(x,y,'h')
+
+```
+  
+  
+  Tal que x é o tamanho da mesa e y a gorjeta.
+
+
+
+```{r}
+m <- (2)
+y = 0.18 - 0.01*m
+print("m com valor de 2:")
+## [1] "m com valor de 2:"
+print(y)
+## [1] 0.16
+``'

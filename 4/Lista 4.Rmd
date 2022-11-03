@@ -1,0 +1,78 @@
+---
+title: "Lista 04"
+author: "Karine Porto Paz "
+date: "16/11/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+1
+```{r echo=FALSE}
+library(readxl)
+bnames <- read.csv("C:/Users/josef/Desktop/UnB/Primeiro semestre/CE1/lista 4/bnames.csv")
+View(bnames)
+births_1_ <- read.csv("C:/Users/josef/Desktop/UnB/Primeiro semestre/CE1/lista 4/births (1).csv")
+View(births_1_)
+head(bnames)
+head(births_1_)
+```
+
+B
+```{r warning=FALSE, include=FALSE}
+bnames%>%
+  filter(sex == "girl")%>% filter(year=="2003")%>%arrange(desc(prop))
+
+  
+
+
+```
+	Emily, Emma, Madison, Hanna,Olivia, Abigail, Alexis,	Ashley, Elizabeth e Samantha
+	
+C	
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+Elizabeth <- bnames[bnames$name == "Elizabeth" |
+ bnames$name == "Abigail", ]
+qplot(year, prop, data = Elizabeth,geom = "line",
+ color = interaction(sex,name))
+	
+```	
+D
+```{r echo=FALSE}
+library(dplyr)
+bnames$births-> births
+bnames2<-left_join(bnames, births_1_)
+bnames2 <- mutate(bnames2, n = round(prop * births))
+head(bnames2)
+```
+e
+
+A função **str_sub** é usada para obter uma parte fixa de uma string, como, por exemplo, manipular textos.
+str_sub seleciona todos os argumentos para terem o mesmo comprimento que o argumento mais longo. Se algum argumento tiver comprimento 0, a saída será um vetor de caracteres de comprimento zero.
+
+
+f
+```{r echo=FALSE}
+library(stringr)
+inicial <- str_sub(bnames2$name, start=1, end =1)
+mutate(bnames2, inicial)->bname3
+head(bname3)
+```
+g
+
+```{r echo=FALSE}
+library(dplyr)
+teste02<-group_by(bname3,inicial,sex, year)
+teste03<-summarise(teste02, total=sum(n))
+teste05 <-summarise(teste03, total=sum(total))
+arrange(teste05, desc(total))
+library(reshape2)
+```
+H
+```{r echo=FALSE}
+ggplot ( teste03 , aes (inicial, total,fill=sex)) +  
+  geom_col()
+```

@@ -1,0 +1,63 @@
+---
+title: "Lista 02"
+author: "josé"
+date: "14/10/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Lista 2
+```{r eval=F, echo=F, message=FALSE, warning=FALSE}
+# Carregando os pacotes necessários
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load("tinytex", "tidyverse", "xtable", "knitr")
+```
+
+$$X = \begin{bmatrix}13 & 7 & 8 & 14 \\
+5 & 2 & 3 & 9 \\
+10 &  15 & 16 & 4 \\
+6 & 12 & 1 & 11
+\end{bmatrix}
+$$
+
+
+
+$$X = \begin{bmatrix}13 & 7 & 8 & 14 \\
+5 & 2 & 10 & 9 \\
+10 &  15 & 16 & 4 \\
+6 & 12 & 1 & 11
+\end{bmatrix}
+$$
+$$X = \begin{bmatrix}13 & 5 & 10 & 6 \\
+7 & 2 & 15 & 12 \\
+8 &  3 & 16 & 1 \\
+14 & 9 & 4 & 11
+\end{bmatrix}
+$$
+$$X = \begin{bmatrix}39 & 21 & 24 & 42 \\
+15 & 6 & 9 & 27 \\
+30 &  45 & 48 & 12 \\
+18 & 36 & 3 & 33
+\end{bmatrix}
+$$
+$$X = \begin{bmatrix}42\\
+19 \\
+45 \\
+30
+\end{bmatrix}
+$$
+
+42+19+45+30=A;
+
+
+136=A
+
+
+$$
+f(x)=\frac{\left(\sqrt{x^2 + 1} + x\right)^2}{\sqrt[3]{x^6+1}}.
+$$
+
+
